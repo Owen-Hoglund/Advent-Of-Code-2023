@@ -1,3 +1,5 @@
+// FINAL SOLUTION TO DAY 8
+
 use std::collections::HashMap;
 use itertools::Itertools;
 
