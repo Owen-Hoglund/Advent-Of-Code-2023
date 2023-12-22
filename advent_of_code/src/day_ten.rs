@@ -4,16 +4,16 @@ struct Tube {
     character: char,
     nsew: (bool, bool, bool, bool),
 } impl Tube {
-    fn from(c: char, xy: (usize, usize)) -> Self {
+    fn from(c: char, yx: (usize, usize)) -> Self {
         match c {
-            'S' => Tube { location: xy, character: c, nsew: (true, true, true, true) },
-            '|' => Tube { location: xy, character: c, nsew: (true, true, false, false) },
-            '-' => Tube { location: xy, character: c, nsew: (false, false, true, true) },
-            'L' => Tube { location: xy, character: c, nsew: (true, false, true, false) },
-            'J' => Tube { location: xy, character: c, nsew: (true, false, false, true) },
-            '7' => Tube { location: xy, character: c, nsew: (false, true, false, true) },
-            'F' => Tube { location: xy, character: c, nsew: (false, true, true, false) },
-            '.' => Tube { location: xy, character: c, nsew: (false, false, false, false) },
+            'S' => Tube { location: yx, character: c, nsew: (true, true, true, true) },
+            '|' => Tube { location: yx, character: c, nsew: (true, true, false, false) },
+            '-' => Tube { location: yx, character: c, nsew: (false, false, true, true) },
+            'L' => Tube { location: yx, character: c, nsew: (true, false, true, false) },
+            'J' => Tube { location: yx, character: c, nsew: (true, false, false, true) },
+            '7' => Tube { location: yx, character: c, nsew: (false, true, false, true) },
+            'F' => Tube { location: yx, character: c, nsew: (false, true, true, false) },
+            '.' => Tube { location: yx, character: c, nsew: (false, false, false, false) },
             _ => panic!("Not a valid input")
         }
     }
@@ -31,9 +31,10 @@ struct Tube {
 pub fn day_ten(file_contents: String) {
     let (grid, start) = populate_grid(&file_contents);
     let circuit = get_circuit(&grid, start);
-    for c in circuit {
-        println!("{}, {:?}", c.character, c.location);
-    }
+    // for c in circuit {
+    //     println!("{}, {:?}", c.character, c.location);
+    // }
+    println!("{}", circuit.len()/2);
 }
 
 fn get_circuit(grid: &Vec<Vec<Tube>>, origin: (usize, usize)) -> Vec<Tube> {
@@ -53,12 +54,41 @@ fn get_next(grid: &Vec<Vec<Tube>>, head: (usize, usize), tail: (usize, usize)) -
     let adjacent_elements = vec![(head.0 + 1, head.1), (head.0 - 1, head.1), (head.0, head.1 + 1), (head.0, head.1 - 1)];
     for location in adjacent_elements {
         if location == tail {continue;}
-        match grid[head.1][head.0].connects(&grid[location.1][location.0]){
-            true => {return grid[location.1][location.0]},
-            false => (),
+
+        match in_bounds(grid, location) {
+            true => {
+                match grid[head.1][head.0].connects(&grid[location.1][location.0]){
+                    true => {return grid[location.1][location.0]},
+                    false => (),
+                }
+            },
+            false => continue,
         }
     }
+
+    println!("{:?}", head);
+    println!("{:?}", grid[head.1][head.0]);
+    println!("{}", grid[0].len());
+    println!("{}", grid[1].len());
+
+
     panic!("Shouldnt be possible to not find a next element");
+}
+
+fn in_bounds(grid: &Vec<Vec<Tube>>, coordinates: (usize, usize)) -> bool {
+    match grid.get(coordinates.0) {
+        Some(row) => match row.get(coordinates.1){
+            Some(_) => true,
+            None => {
+                println!("Failed at {:?}", coordinates);
+                false
+            },
+        },
+        None => {
+            println!("Failed at {:?}", coordinates);
+            false
+        },
+    }
 }
 
 
