@@ -12,10 +12,11 @@ mod day_six;
 mod day_seven;
 mod day_eight;
 mod day_nine;
+mod day_ten;
 
 fn main() {
 
-    for i in 1..10{    
+    for i in 1..11{    
         let day_number = i; // Lets add user input here eventually
         match open_file(day_number){
             Ok(contents) => day_function(day_number, contents),
@@ -35,6 +36,7 @@ fn day_function(day: u8, contents: String) {
         7 => day_seven::day_seven(),
         8 => day_eight::day_eight(contents),
         9 => day_nine::day_nine(contents),
+        10 => day_ten::day_ten(contents),
 
 
 
